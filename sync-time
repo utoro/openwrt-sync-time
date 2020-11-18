@@ -16,3 +16,4 @@ chmod +x /etc/cek_waktu
 
 sed -i '/cek_waktu/d' /etc/crontabs/root
 echo -e "0 * * * * /etc/cek_waktu >/dev/null 2>&1" >> /etc/crontabs/root
+/etc/init.d/cron restart
