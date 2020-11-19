@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ $1 = "install" ]]; then
 	curl -f -s -o /etc/cek_waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/cek_waktu && chmod +x /etc/cek_waktu || { echo 'Install gagal! Periksa koneksi internet' ; exit 1; }
