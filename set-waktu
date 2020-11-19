@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cek=$(curl -f -s http://worldtimeapi.org/api/timezone/Asia/Jakarta.txt|grep -w "datetime"|sed 's/^.*: //')
+tanggal="${cek:0:10}"
+jam="${cek:11:8}"
+
+if [ -z "$tanggal" -o -z "$jam" ]; then
+	logger -t sync-time "Gagal mendapatkan waktu terbaru"
+	exit 1
+else
+	sed -i '/exit 0/d' /etc/rc.local
+	sed -i '/date -s/d' /etc/rc.local
+	sed -i '/# fix reset 2015/d' /etc/rc.local
+	sed -i '$a# fix reset 2015' /etc/rc.local
+	echo -e "date -s \"${tanggal} ${jam}\"\nexit 0" >> /etc/rc.local
+	logger -t sync-time "Sukses memperbarui tanggal"
+fi
