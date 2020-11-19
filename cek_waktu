@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cek=$(curl -s http://worldtimeapi.org/api/timezone/Asia/Jakarta.txt|grep -w "datetime"|sed 's/^.*: //')
 tanggal="${cek:0:10}"
