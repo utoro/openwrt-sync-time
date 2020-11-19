@@ -1,24 +1,24 @@
 #!/bin/bash
 
 if [[ $1 = "install" ]]; then
-	curl -f -s -o /etc/cek_waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/cek_waktu && chmod +x /etc/cek_waktu || { echo 'Install gagal! Periksa koneksi internet' ; exit 1; }
+	curl -f -s -o /usr/bin/set-waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/set-waktu && chmod +x /usr/bin/set-waktu || { echo 'Install script gagal! Periksa koneksi internet' ; exit 1; }
+	(. /usr/bin/set-waktu) || { echo "Install script gagal! Periksa koneksi internet"; exit 1; }
 	
-	sed -i '/cek_waktu/d' /etc/crontabs/root
+	sed -i '/set-waktu/d' /etc/crontabs/root
 	sed -i '/# fix reset 2015/d' /etc/crontabs/root
 	sed -i '$a# fix reset 2015' /etc/crontabs/root
-	echo -e "0 * * * * /etc/cek_waktu >/dev/null 2>&1" >> /etc/crontabs/root
+	echo -e "0 * * * * /etc/set-waktu >/dev/null 2>&1" >> /etc/crontabs/root
 	/etc/init.d/cron restart
 
-	. /etc/cek_waktu
 	echo -e "Install script sukses!"
 	exit 0
 elif [[ $1 = "uninstall" ]]; then
-	sed -i '/cek_waktu/d' /etc/crontabs/root
+	sed -i '/set-waktu/d' /etc/crontabs/root
 	sed -i '/# fix reset 2015/d' /etc/crontabs/root
 	/etc/init.d/cron restart
 	sed -i '/date -s/d' /etc/rc.local
 	sed -i '/# fix reset 2015/d' /etc/rc.local
-	rm -f /etc/cek_waktu
+	rm -f /usr/bin/set-waktu
 	echo -e "Uninstall script sukses!"
 	exit 0
 else
