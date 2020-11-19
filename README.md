@@ -7,11 +7,11 @@ Pastikan terhubung ke internet sebelum mengeksekusi script dibawah
 ### Install
 
 ```bash
-# curl -s https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/sync-time | bash -s install
+curl -s https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/sync-time | bash -s install
 ```
 
 ### Uninstall
 
 ```bash
-# curl -s https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/sync-time | bash -s uninstall
+curl -s https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/sync-time | bash -s uninstall
 ```
