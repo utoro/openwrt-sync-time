@@ -6,4 +6,4 @@ jam="${cek:11:8}"
 
 sed -i '/exit 0/d' /etc/rc.local
 sed -i '/date -s/d' /etc/rc.local
-echo -e "date -s \"${tanggal} ${jam}\"\nexit 0" >> /etc/rc.local
+echo -e "\ndate -s \"${tanggal} ${jam}\"\nexit 0" >> /etc/rc.local
