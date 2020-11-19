@@ -1,31 +1,13 @@
 #!/bin/sh
 
 if [[ $1 = "install" ]]; then
-	cat >/etc/cek_waktu <<EOL
-	#!/bin/sh
-
-	cek=\$(curl -s http://worldtimeapi.org/api/timezone/Asia/Jakarta.txt|grep -w "datetime"|sed 's/^.*: //')
-	tanggal="\${cek:0:10}"
-	jam="\${cek:11:8}"
-
-	sed -i '/exit 0/d' /etc/rc.local.bak
-	sed -i '/date -s/d' /etc/rc.local.bak
-	echo -e "date -s \"\${tanggal} \${jam}\"\nexit 0" >> /etc/rc.local.bak
-	EOL
-
-	chmod +x /etc/cek_waktu
-
+	curl -f -s -o /etc/cek_waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/cek_waktu && chmod +x /etc/cek_waktu || { echo 'Install gagal! Periksa koneksi internet' ; exit 1; }
+	
 	sed -i '/cek_waktu/d' /etc/crontabs/root
-	echo -e "0 * * * * /etc/cek_waktu >/dev/null 2>&1" >> /etc/crontabs/root
+	echo -e "\n0 * * * * /etc/cek_waktu >/dev/null 2>&1" >> /etc/crontabs/root
 	/etc/init.d/cron restart
-  
-	cek=$(curl -s http://worldtimeapi.org/api/timezone/Asia/Jakarta.txt|grep -w "datetime"|sed 's/^.*: //')
-	tanggal="${cek:0:10}"
-	jam="${cek:11:8}"
-	sed -i '/exit 0/d' /etc/rc.local
-	sed -i '/date -s/d' /etc/rc.local
-	echo -e "date -s \"${tanggal} ${jam}\"\nexit 0" >> /etc/rc.local
 
+	. /etc/cek_waktu
 	echo -e "Install script sukses!"
 	exit 0
 elif [[ $1 = "uninstall" ]]; then
@@ -36,6 +18,6 @@ elif [[ $1 = "uninstall" ]]; then
 	echo -e "Uninstall script sukses!"
 	exit 0
 else
-	echo -e "Gagal! Perintah tidak dikenal"
+	echo "Gagal! Perintah tidak dikenal"
 	exit 1
 fi
