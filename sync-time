@@ -7,7 +7,7 @@ if [[ $1 = "install" ]]; then
 	sed -i '/set-waktu/d' /etc/crontabs/root
 	sed -i '/# fix reset 2015/d' /etc/crontabs/root
 	sed -i '$a# fix reset 2015' /etc/crontabs/root
-	echo -e "0 * * * * /etc/set-waktu >/dev/null 2>&1" >> /etc/crontabs/root
+	echo -e "0 * * * * /usr/bin/set-waktu >/dev/null 2>&1" >> /etc/crontabs/root
 	/etc/init.d/cron restart
 
 	echo -e "Install script sukses!"
