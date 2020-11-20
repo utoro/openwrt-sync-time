@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [[ $1 = "install" ]]; then
-	curl -f -s -o /usr/bin/set-waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/main/set-waktu && chmod +x /usr/bin/set-waktu || { echo 'Install script gagal! Periksa koneksi internet' ; exit 1; }
+	
+	curl -f -s -o /usr/bin/set-waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/new_feature/set-waktu && chmod +x /usr/bin/set-waktu || { echo 'Install script gagal! Periksa koneksi internet' ; exit 1; }
 	
 	if [[ $2 = "startup" ]]; then
 		cmd="#!/bin/sh /etc/rc.common\nSTART=13\n\nstart () {\n\tlogger -t fix-time \"Proses fix-time dijalankan\"\n\twaktu=\"$tanggal $jam\"\n\tdate -s \"\$waktu\"\n\tlogger -t fix-time \"Berhasil set waktu ke \$waktu\"\n}"
