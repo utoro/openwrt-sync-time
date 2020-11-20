@@ -1,21 +1,22 @@
 #!/bin/bash
 
 if [[ $1 = "install" ]]; then
-	
-	curl -f -s -o /usr/bin/set-waktu https://raw.githubusercontent.com/utoro/openwrt-sync-time/new_feature/set-waktu && chmod +x /usr/bin/set-waktu || { echo 'Install script gagal! Periksa koneksi internet' ; exit 1; }
-	
-	if [[ $2 = "startup" ]]; then
+	cmd="#!/bin/bash\n\ncek=\$(curl -f -s http://worldtimeapi.org/api/timezone/Asia/Jakarta.txt|grep -w \"datetime\"|sed 's/^.*: //')\ntanggal=\"\${cek:0:10}\"\njam=\"\${cek:11:8}\"\n\nif [ -z \"\$tanggal\" -o -z \"\$jam\" ]; then\n\tlogger -t sync-time \"Gagal mendapatkan waktu terbaru\"\n\texit 1\nfi\n\n#cmd\n\nlogger -t sync-time \"Sukses memperbarui waktu menjadi \$tanggal \$jam\""
+	echo -e $cmd > /usr/bin/set-waktu && chmod +x /usr/bin/set-waktu || { echo "Install script gagal! Gagal membuat file baru"; exit 1; }
+
+	if [[ -z $2 || $2 = "rc.local" ]]; then
+		cmd="sed -i '/exit 0/d' /etc/rc.local\nsed -i '/date -s/d' /etc/rc.local\nsed -i '/# fix reset 2015/d' /etc/rc.local\nsed -i '\$a# fix reset 2015' /etc/rc.local\necho -e \"date -s $(echo "\\\\")\"\${tanggal} \${jam}$(echo "\\\\")\"\\\nexit 0\" >> /etc/rc.local"
+		sed -i "s|#cmd|$cmd|g" /usr/bin/set-waktu
+	elif [[ $2 = "startup" ]]; then
 		cmd="#!/bin/sh /etc/rc.common\nSTART=13\n\nstart () {\n\tlogger -t fix-time \"Proses fix-time dijalankan\"\n\twaktu=\"$tanggal $jam\"\n\tdate -s \"\$waktu\"\n\tlogger -t fix-time \"Berhasil set waktu ke \$waktu\"\n}"
-		echo -e $cmd > /etc/init.d/fix-time && chmod +x /etc/init.d/fix-time && /etc/init.d/fix-time enable
+		echo -e $cmd > /etc/init.d/fix-time && chmod +x /etc/init.d/fix-time && /etc/init.d/fix-time enable || { echo "Install script gagal! Gagal membuat file baru"; rm -f /usr/bin/set-waktu; exit 1; }
 
 		cmd="sed -i \"s\|.*waktu=.*\|\\\twaktu=$(echo "\\\\")\"\$tanggal \$jam$(echo "\\\\")\"\|\" /etc/init.d/fix-time"
 		sed -i "s|#cmd|$cmd|g" /usr/bin/set-waktu
-	elif [[ $2 = "rc.local" ]]; then
-		cmd="sed -i '/exit 0/d' /etc/rc.local\nsed -i '/date -s/d' /etc/rc.local\nsed -i '/# fix reset 2015/d' /etc/rc.local\nsed -i '\$a# fix reset 2015' /etc/rc.local\necho -e \"date -s $(echo "\\\\")\"\${tanggal} \${jam}$(echo "\\\\")\"\\\nexit 0\" >> /etc/rc.local"
-		sed -i "s|#cmd|$cmd|g" /usr/bin/set-waktu
 	else
 		echo "Gagal! Perintah tidak dikenal"
-		echo "contoh: $0 $1 <startup | rc.local>"
+		echo "contoh: $0 $1 <rc.local | startup>"
+		rm -f /usr/bin/set-waktu
 		exit 1
 	fi
 
