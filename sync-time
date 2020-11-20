@@ -34,7 +34,6 @@ elif [[ $1 = "uninstall" ]]; then
 		/etc/init.d/fix-time stop
 		/etc/init.d/fix-time disable
 		rm -f /etc/init.d/fix-time
-		echo "File fix-time berhasil dihapus"
 	fi
 
 	sed -i '/set-waktu/d' /etc/crontabs/root
@@ -43,6 +42,7 @@ elif [[ $1 = "uninstall" ]]; then
 	sed -i '/date -s/d' /etc/rc.local
 	sed -i '/# fix reset 2015/d' /etc/rc.local
 	rm -f /usr/bin/set-waktu
+
 	echo -e "Uninstall script sukses!"
 	exit 0
 else

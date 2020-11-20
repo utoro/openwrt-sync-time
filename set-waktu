@@ -11,4 +11,4 @@ fi
 
 #cmd
 
-logger -t sync-time "Sukses memperbarui tanggal"
+logger -t sync-time "Sukses memperbarui waktu menjadi $tanggal $jam"
